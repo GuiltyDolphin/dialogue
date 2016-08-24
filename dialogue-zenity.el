@@ -1,12 +1,7 @@
-;;; dialogue.el --- Interface for external dialogue boxes.
+;;; dialogue-zenity.el --- Zenity implementation for dialogue.
 
 ;; Copyright (C) 2016 Ben Moon
 ;; Author: Ben Moon <guiltydolphin@gmail.com>
-;; URL: https://github.com/guiltydolphin/dialogue
-;; Git-Repository: git://github.com/guiltydolphin/dialogue.git
-;; Created: 2016-08-24
-;; Version: 0.1.0
-;; Keywords: dialog, dialogue, external
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,11 +17,20 @@
 
 ;;; Commentary:
 ;;;
-;;; Interface for external dialogue boxes.
+;;; Zenity implementation for dialogue.
 ;;;
 ;;; Code:
 
-(require 'dialogue-zenity)
+(defun dialogue-zenity--create-dialogue (type buffer &rest program-args)
+  "Start a Zenity process for a TYPE dialogue box with buffer BUFFER.
+PROGRAM-ARGS is treated the same as in `start-process'."
+  (apply 'start-process
+         (format "dialogue-zenity-%s-%s" type (random 1000)) buffer "zenity"
+         (format "--%s" type) program-args))
 
-(provide 'dialogue)
-;;; dialogue.el ends here
+(defun dialogue-zenity--create-dialogue-progress (title text)
+  "Create a zenity progress dialogue with title TITLE and initial text TEXT."
+  (dialogue-zenity--create-dialogue "progress" nil "--title" title "--text" text))
+
+(provide 'dialogue-zenity)
+;;; dialogue-zenity.el ends here
